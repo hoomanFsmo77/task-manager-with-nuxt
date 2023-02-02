@@ -1,6 +1,11 @@
 <template>
     <div class="container mt-5 pt-4">
       <div class="row">
+        <div class="col-6">
+          <TasksCreate/>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-3">
           <TasksFilter/>
         </div>
@@ -14,14 +19,15 @@
       </div>
       <div v-else class="row g-2">
         <div class="col-4" v-for="item in tasks">
-          <TasksShow :content="item.title" :completed="item.completed"/>
+          <TasksShow :content="item.title" :id="item.id" :completed="item.completed"/>
         </div>
       </div>
     </div>
 </template>
 
 <script setup lang="ts">
-const {tasks,fetchFlag}=useMain()
+const {tasks,fetchFlag}=useShow()
+
 </script>
 
 <style scoped>

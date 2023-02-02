@@ -1,7 +1,7 @@
 import {useTaskStore} from "~/store/task";
 
 
-export const useMain=()=>{
+export const useShow=()=>{
     const store=useTaskStore()
     const route=useRoute()
     const tasks=computed(()=>store['getTask'])

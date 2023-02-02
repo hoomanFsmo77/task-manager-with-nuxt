@@ -1,2 +1,5 @@
-export {useMain} from './tasks/useMain'
+export {useShow} from './tasks/useShow'
 export {UseFilter} from './tasks/useFilter'
+export {useUpdate} from './tasks/useUpdate'
+export {useDelete} from './tasks/useDelete'
+export {useCreate} from './tasks/useCreate'

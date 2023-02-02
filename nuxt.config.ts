@@ -18,14 +18,6 @@ export default defineNuxtConfig({
     },
     srcDir: './src',
     modules: [
-        [
-            '@pinia/nuxt',
-            {
-                autoImports: [
-                    'defineStore',
-                    ['defineStore', 'definePiniaStore']
-                ],
-            },
-        ],
+        '@pinia/nuxt',
     ],
 })
