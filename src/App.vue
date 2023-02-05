@@ -4,7 +4,7 @@
   </NuxtLayout>
 </template>
 <script setup>
-import './assets/styles/App.css'
+import './assets/styles/App.scss'
 
 </script>
 <style >

@@ -1,8 +1,8 @@
 import {defineStore} from "pinia";
-import axios from "axios";
 import {ITask,Route_Params,New_Task} from "~/composables/useTypes";
 import {ETask} from "~/composables/useEnum";
 import Swal from "sweetalert2";
+const apiFetch = $fetch.create({ baseURL: 'https://jsonplaceholder.typicode.com/todos' })
 
 export const useTaskStore=defineStore('task',{
     state:()=>{
@@ -33,56 +33,61 @@ export const useTaskStore=defineStore('task',{
         }
     },
     actions:{
-        [ETask.SET_TASK](itemToShow:Route_Params){
+        async [ETask.SET_TASK](itemToShow:Route_Params){
             this.fetchFlag=false
-            axios.get(`https://jsonplaceholder.typicode.com/todos?_limit=${itemToShow}`).then(res=>{
-                this.tasks=res.data
+            try{
+                const data=await apiFetch<ITask[]>('', {retry:3,query:{_limit:itemToShow}});
+                this.tasks=data
                 this.fetchFlag=true
-            })
+            }catch (e) {
+                console.log(e)
+            }
         },
-        [ETask.SET_UPDATED_TASK](id:number,completed:boolean){
+        async [ETask.SET_UPDATED_TASK](id:number,completed:boolean){
             const index=this["getUpdatedTaskIndex"](id)
             this.updateFlag=false
             this.taskIdUpdating=this.tasks[index].id
-            axios.put(`https://jsonplaceholder.typicode.com/todos/${id}`,{
-                completed:!completed
-            }).
-            then(response=>{
+            try {
+                const request=await apiFetch(`/${id}`,{
+                    method:'PUT',
+                    headers:{'Content-Type': 'application/json'},
+                    body:JSON.stringify({completed:!completed})
+                })
                 this.updateFlag=true
                 this.tasks[index].completed=!this.tasks[index].completed
                 this.taskIdUpdating=null
-                Swal.fire({
-                    toast:true,
-                    position: 'top',
-                    icon: 'success',
-                    title: 'Task Updated!',
-                    showConfirmButton: false,
-                    timer: 1500
+                await Swal.fire({
+                        toast:true,
+                        position: 'top',
+                        icon: 'success',
+                        title: 'Task Updated!',
+                        showConfirmButton: false,
+                        timer: 1500
                 })
-            }).catch(err=>{
+
+            }catch (e) {
                 this.updateFlag=true
                 this.taskIdUpdating=null
-                Swal.fire({
-                    toast:true,
-                    position: 'top',
-                    icon: 'error',
-                    title: 'Something went wrong!',
-                    showConfirmButton: false,
-                    timer: 1500
+                await Swal.fire({
+                        toast:true,
+                        position: 'top',
+                        icon: 'error',
+                        title: 'Something went wrong!',
+                        showConfirmButton: false,
+                        timer: 1500
                 })
-            })
-
+            }
         },
-        [ETask.DELETE_TASK](id:number){
+        async [ETask.DELETE_TASK](id:number){
             const index=this["getUpdatedTaskIndex"](id)
             this.updateFlag=false
             this.taskIdUpdating=this.tasks[index].id
-            axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`).
-            then(res=>{
+            try {
+                const request=await apiFetch(`/${id}`,{method:'DELETE'})
                 this.tasks.splice(index,1)
                 this.updateFlag=true
                 this.taskIdUpdating=null
-                Swal.fire({
+                await Swal.fire({
                     toast:true,
                     position: 'top',
                     icon: 'warning',
@@ -90,32 +95,37 @@ export const useTaskStore=defineStore('task',{
                     showConfirmButton: false,
                     timer: 1500
                 })
-            }).
-            catch(err=>{
+
+            }catch (e) {
                 this.updateFlag=true
                 this.taskIdUpdating=null
-                Swal.fire({
+               await Swal.fire({
                     position: 'top',
                     icon: 'error',
                     title: 'Something went wrong!',
                     showConfirmButton: false,
                     timer: 1500
                 })
-            })
+            }
         },
-        [ETask.CREATE_TASK](newTask:New_Task){
+        async [ETask.CREATE_TASK](newTask:New_Task){
             const id=this['getLastId']
-            axios.post('https://jsonplaceholder.typicode.com/todos',{
-                id:id,
-                title:newTask.content,
-                completed:newTask.completed
-            }).then(res=>{
+            try {
+                const request=await apiFetch('',{
+                    method:'POST',
+                    headers:{'content-type':'application/json'},
+                    body:JSON.stringify({
+                        id:id,
+                        title:newTask.content,
+                        completed:newTask.completed
+                    })
+                })
                 this.tasks.unshift({
                     id:id,
                     title:newTask.content,
                     completed:newTask.completed
                 })
-                Swal.fire({
+                await Swal.fire({
                     toast:true,
                     position: 'top',
                     icon: 'success',
@@ -123,8 +133,9 @@ export const useTaskStore=defineStore('task',{
                     showConfirmButton: false,
                     timer: 1500
                 })
-            }).catch(err=>{
-                Swal.fire({
+
+            }catch (e) {
+                await Swal.fire({
                     toast:true,
                     position: 'top',
                     icon: 'error',
@@ -132,7 +143,7 @@ export const useTaskStore=defineStore('task',{
                     showConfirmButton: false,
                     timer: 1500
                 })
-            })
+            }
         }
     }
 })

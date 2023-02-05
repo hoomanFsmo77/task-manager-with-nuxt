@@ -1,8 +1,8 @@
 
 
 export default defineNuxtConfig({
+    css:['~/assets/styles/App.scss'],
     app:{
-        pageTransition:{name:'fade'},
         rootId:'v-app',
         rootTag:'main',
         head:{
