@@ -10,3 +10,6 @@ export enum ETask {
     "CREATE_TASK"='createTask',
     "GET_LAST_ID"='getLastId'
 }
+export enum EProduct {
+    "GET_PRODUCTS"='getProducts'
+}

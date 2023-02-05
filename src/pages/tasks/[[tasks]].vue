@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-const {tasks,fetchFlag}=useShow()
+const {tasks,fetchFlag}=useTaskShow()
 
 </script>
 

@@ -6,7 +6,7 @@
 <script setup lang="ts">
 interface Prop{completed:boolean,id:number}
 const props=defineProps<Prop>()
-const {updateTask}=useUpdate(props)
+const {updateTask}=useTaskUpdate(props)
 </script>
 
 <style scoped>

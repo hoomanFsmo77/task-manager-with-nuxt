@@ -1,6 +1,6 @@
 
 
-export const UseFilter=()=>{
+export const UseTaskFilter=()=>{
     const toBeNarrow=useState<number|string>('limit',()=>'199')
     const filterTasks = () => {
         navigateTo({

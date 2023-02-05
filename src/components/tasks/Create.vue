@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-const {create,newTaskInfo}=useCreate()
+const {create,newTaskInfo}=useTaskCreate()
 </script>
 
 <style scoped>

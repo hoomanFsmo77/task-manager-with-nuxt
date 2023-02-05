@@ -3,7 +3,7 @@ import {New_Task} from "~/composables/useTypes";
 
 
 
-export const useCreate=()=>{
+export const useTaskCreate=()=>{
     const store=useTaskStore()
     const newTaskInfo=reactive<New_Task>({
         completed:false,

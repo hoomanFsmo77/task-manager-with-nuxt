@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 const props=defineProps<{id:number}>()
-const {deleteTask}=useDelete(props)
+const {deleteTask}=useTaskDelete(props)
 
 </script>
 

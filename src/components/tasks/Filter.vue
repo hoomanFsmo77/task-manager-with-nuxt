@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-const {toBeNarrow,filterTasks}=UseFilter()
+const {toBeNarrow,filterTasks}=UseTaskFilter()
 </script>
 
 <style scoped>
