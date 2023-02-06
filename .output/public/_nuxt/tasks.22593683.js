@@ -1,0 +1,1 @@
+import{c as t,o as s,L as e}from"./entry.45457879.js";import{_ as n}from"./_plugin-vue_export-helper.c27b6911.js";const c={name:"tasks"};function a(_,r,p,m,f,u){const o=e;return s(),t(o)}const d=n(c,[["render",a]]);export{d as default};
