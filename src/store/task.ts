@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import {ITask,Route_Params,New_Task} from "~/composables/useTypes";
 import {ETask} from "~/composables/useEnum";
-import Swal from "sweetalert2";
+import {showMessage} from "~/composables/useHelper";
 const apiFetch = $fetch.create({ baseURL: 'https://jsonplaceholder.typicode.com/todos' })
 
 export const useTaskStore=defineStore('task',{
@@ -34,115 +34,73 @@ export const useTaskStore=defineStore('task',{
     },
     actions:{
         async [ETask.SET_TASK](itemToShow:Route_Params){
-            this.fetchFlag=false
-            try{
-                const data=await apiFetch<ITask[]>('', {retry:3,query:{_limit:itemToShow}});
-                this.tasks=data
-                this.fetchFlag=true
-            }catch (e) {
-                console.log(e)
+            const {data,error,pending}=await useAsyncData('setTask',()=>apiFetch('',{retry:3,query:{_limit:itemToShow}}))
+            if(data.value){
+                this.tasks=data.value as ITask[]
+                this.fetchFlag=!pending.value
+            }
+            if(error.value){
+                console.log(error)
             }
         },
         async [ETask.SET_UPDATED_TASK](id:number,completed:boolean){
             const index=this["getUpdatedTaskIndex"](id)
-            this.updateFlag=false
             this.taskIdUpdating=this.tasks[index].id
-            try {
-                const request=await apiFetch(`/${id}`,{
-                    method:'PUT',
-                    headers:{'Content-Type': 'application/json'},
-                    body:JSON.stringify({completed:!completed})
-                })
-                this.updateFlag=true
+            this.updateFlag=false
+            const {data,error,pending}=await useAsyncData('updateTask',()=>apiFetch(`/${id}`,{
+                method:'PUT',
+                headers:{'Content-Type': 'application/json'},
+                body:JSON.stringify({completed:!completed})
+            }))
+            if(data.value){
+                this.updateFlag=!pending.value
                 this.tasks[index].completed=!this.tasks[index].completed
                 this.taskIdUpdating=null
-                await Swal.fire({
-                        toast:true,
-                        position: 'top',
-                        icon: 'success',
-                        title: 'Task Updated!',
-                        showConfirmButton: false,
-                        timer: 1500
-                })
-
-            }catch (e) {
-                this.updateFlag=true
+                showMessage('Task Updated!','success')
+            }
+            if(error.value){
                 this.taskIdUpdating=null
-                await Swal.fire({
-                        toast:true,
-                        position: 'top',
-                        icon: 'error',
-                        title: 'Something went wrong!',
-                        showConfirmButton: false,
-                        timer: 1500
-                })
+                showMessage('Something went wrong!','error')
             }
         },
         async [ETask.DELETE_TASK](id:number){
             const index=this["getUpdatedTaskIndex"](id)
             this.updateFlag=false
             this.taskIdUpdating=this.tasks[index].id
-            try {
-                const request=await apiFetch(`/${id}`,{method:'DELETE'})
+            const {error,pending,data}=await useAsyncData('deleteTask',()=>apiFetch(`/${id}`,{method:'DELETE'}))
+            if(data.value){
                 this.tasks.splice(index,1)
+                this.updateFlag=!pending.value
+                this.taskIdUpdating=null
+                showMessage('Task Updated!','warning')
+            }
+            if(error.value){
                 this.updateFlag=true
                 this.taskIdUpdating=null
-                await Swal.fire({
-                    toast:true,
-                    position: 'top',
-                    icon: 'warning',
-                    title: 'Task Deleted!',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-
-            }catch (e) {
-                this.updateFlag=true
-                this.taskIdUpdating=null
-               await Swal.fire({
-                    position: 'top',
-                    icon: 'error',
-                    title: 'Something went wrong!',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                showMessage('Something went wrong!','error')
             }
         },
         async [ETask.CREATE_TASK](newTask:New_Task){
             const id=this['getLastId']
-            try {
-                const request=await apiFetch('',{
-                    method:'POST',
-                    headers:{'content-type':'application/json'},
-                    body:JSON.stringify({
-                        id:id,
-                        title:newTask.content,
-                        completed:newTask.completed
-                    })
+            const {error,data}=await useFetch('https://jsonplaceholder.typicode.com/todos',{
+                method:'POST',
+                headers:{'content-type':'application/json'},
+                body:JSON.stringify({
+                    id:id,
+                    title:newTask.content,
+                    completed:newTask.completed
                 })
+            })
+            if(data.value){
                 this.tasks.unshift({
                     id:id,
                     title:newTask.content,
                     completed:newTask.completed
                 })
-                await Swal.fire({
-                    toast:true,
-                    position: 'top',
-                    icon: 'success',
-                    title: 'Task Added!',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-
-            }catch (e) {
-                await Swal.fire({
-                    toast:true,
-                    position: 'top',
-                    icon: 'error',
-                    title: 'Something went wrong!',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                showMessage('Task Added!','success')
+            }
+            if(error.value){
+                showMessage('Something went wrong!','error')
             }
         }
     }

@@ -1,6 +1,7 @@
 import {defineStore} from "pinia";
 import {IProduct} from "~/composables/useTypes";
 import {EProduct} from "~/composables/useEnum";
+import {useCartStore} from "~/store/cart";
 
 export const useProductStore=defineStore('products',{
     state:()=>{
@@ -54,6 +55,16 @@ export const useProductStore=defineStore('products',{
     getters:{
         [EProduct.GET_PRODUCTS](state){
             return state.products
+        },
+        [EProduct.GET_PRODUCT_BY_ID]:(state)=>(id:number):IProduct=>{
+            return state.products.filter(item=>item.id===id)[0]
+        }
+    },
+    actions:{
+        [EProduct.ADD_PRODUCT](id:number){
+            const cartStore=useCartStore()
+            const target=this['getProductById'](id)
+            cartStore['addToCart'](target)
         }
     }
 })

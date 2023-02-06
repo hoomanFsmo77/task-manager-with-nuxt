@@ -11,5 +11,20 @@ export enum ETask {
     "GET_LAST_ID"='getLastId'
 }
 export enum EProduct {
-    "GET_PRODUCTS"='getProducts'
+    "GET_PRODUCTS"='getProducts',
+    "ADD_PRODUCT"="addProduct",
+    "GET_PRODUCT_BY_ID"="getProductById"
+}
+
+
+export enum ECart {
+    "GET_CART"='getCart',
+    "GET_CART_LENGTH"="getCartLength",
+    "ADD_TO_CART"="addToCart",
+    "GET_IS_EXIST"="getIsExist",
+    "GET_PRODUCT_INDEX_BY_ID"="getProductIndexById",
+    "INCREMENT"='increment',
+    "DECREMENT"='decrement',
+    "DELETE_PRODUCT"='deleteProduct',
+    "GET_TOTAL_PRICE"="getTotalPrice"
 }

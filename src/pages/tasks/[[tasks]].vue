@@ -18,7 +18,7 @@
         </div>
       </div>
       <div v-else class="row g-2">
-        <div class="col-4" v-for="item in tasks">
+        <div class="col-4 p-1" v-for="item in tasks">
           <TasksShow :content="item.title" :id="item.id" :completed="item.completed"/>
         </div>
       </div>

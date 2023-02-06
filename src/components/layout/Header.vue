@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import {useCartStore} from "~/store/cart";
 const store=useCartStore()
-const cartLength=computed(()=>store.getCartLength)
+const cartLength=computed(()=>store['getCartLength'])
 const goToCart = () => {
   navigateTo({
     name:'cart'
